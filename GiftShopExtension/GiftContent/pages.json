@@ -1,0 +1,25 @@
+[
+  {
+    "id": "6ac90f1b6c91b4f1e102fec1",
+    "blocks": [
+      {
+        "offerId": "6b33c3c3c3c3c3c3c3c3c3c3",
+        "nameKey": "offer.6b33c3c3c3c3c3c3c3c3c3c3.name",
+        "subtitleKey": "offer.6b33c3c3c3c3c3c3c3c3c3c3.subtitle",
+        "additionalSubtitleKey": null,
+        "additionalSubtitleLabelKey": null,
+        "purchasePopupImage": "/files/shop/69e791d5a5fa3e48440f24d0.webp",
+        "images": ["/files/shop/69e791d5a5fa3e48440f24d0.webp"],
+        "position": { "x": 0, "y": 0 },
+        "aspectRatio": "1:1",
+        "purchaseMethod": "INTERNAL_CURRENCY",
+        "itemsCount": 1,
+        "countable": false,
+        "tags": [],
+        "scope": ["EFT"],
+        "type": "OFFER",
+        "widgetSettings": null
+      }
+    ]
+  }
+]

@@ -7,11 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SPTushonka.Common" Version="5.0.0-pre.202610081626" />
-    <PackageReference Include="SPTushonka.DI" Version="5.0.0-pre.202610081626" />
-    <PackageReference Include="SPTushonka.Reflection" Version="5.0.0-pre.202610081626" />
-    <PackageReference Include="SPTushonka.Server.Core" Version="5.0.0-pre.202610081626" />
-    <PackageReference Include="SPTushonka.Server.Web" Version="5.0.0-pre.202610081626" />
+    <PackageReference Include="SPTushonka.Common" Version="5.0.0-pre.202610091220" />
+    <PackageReference Include="SPTushonka.DI" Version="5.0.0-pre.202610091220" />
+    <PackageReference Include="SPTushonka.Server.Core" Version="5.0.0-pre.202610091220" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="GiftContent\**\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

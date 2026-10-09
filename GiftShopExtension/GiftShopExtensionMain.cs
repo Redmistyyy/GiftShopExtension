@@ -2,6 +2,10 @@
 using SPTarkov.Server.Core.DI;
 using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Spt.Tables;
+using SPTarkov.Server.Core.Models.Eft.Game;
+using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Utils;
+using System.Reflection;
 
 namespace GiftShopExtension;
 
@@ -24,11 +28,61 @@ public record ModMetaData : IModMetadata
     public string License { get; init; } = "MIT";
 }
 
-[Injectable(TypePriority = OnLoadOrder.Preload)]
-public sealed class ShopContentInjector(ShopTable shopTable) : IOnLoad
+[Injectable(TypePriority = OnLoadOrder.Preload + 1)]
+public class GiftShopExtensionMain(
+    ShopTable shopTable,
+    ISptLogger<GiftShopExtensionMain> logger,
+    JsonUtil jsonUtil
+) : IOnLoad
 {
-    public Task OnLoadAsync(CancellationToken cancellationToken)
+    public async Task OnLoadAsync(CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        await LoadAllContentsAsync(cancellationToken);
+    }
+
+    private async Task<T> LoadGiftShopContentAsync<T>(string fileName, CancellationToken ct)
+        where T : class
+    {
+        var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+        var path = Path.Combine(dir, "GiftContent", fileName);
+
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException($"[GiftShopExtension] Missing content file: {fileName}", path);
+        }
+
+        return await jsonUtil.DeserializeFromFileAsync<T>(path, ct)
+                ?? throw new InvalidOperationException($"[GiftShopExtension] Failed to deserialize {fileName}");
+    }
+
+    private async Task LoadAllContentsAsync(CancellationToken cancellationToken)
+    {
+        var content = shopTable.Content;
+
+        var menu = await LoadGiftShopContentAsync<List<ShopMenuItem>>("menu.json", cancellationToken);
+        var pages = await LoadGiftShopContentAsync<List<ShopPage>>("pages.json", cancellationToken);
+        var offers = await LoadGiftShopContentAsync<List<ShopOffer>>("offers.json", cancellationToken);
+        var prices = await LoadGiftShopContentAsync<List<ShopPrice>>("prices.json", cancellationToken);
+        var locale = await LoadGiftShopContentAsync<Dictionary<string, Dictionary<string, string>>>("locale.json", cancellationToken);
+
+        content.Menu.AddRange(menu);
+        content.Pages.AddRange(pages);
+        content.Offers.AddRange(offers);
+        content.Prices.AddRange(prices);
+
+        foreach (var (lang, entries) in locale)
+        {
+            if (!content.Locale.TryGetValue(lang, out var target))
+            {
+                content.Locale[lang] = target = [];
+            }
+
+            foreach (var (key, value) in entries)
+            {
+                target[key] = value;
+            }
+        }
+
+        logger.Success($"[GiftShopExtension] Merged {offers.Count} offers", null);
     }
 }
