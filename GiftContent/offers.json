@@ -1,0 +1,30 @@
+[
+  {
+    "id": "6b33c3c3c3c3c3c3c3c3c3c3",
+    "nameKey": "offer.6b33c3c3c3c3c3c3c3c3c3c3.name",
+    "descriptionKey": "offer.6b33c3c3c3c3c3c3c3c3c3c3.description",
+    "subtitleKey": "offer.6b33c3c3c3c3c3c3c3c3c3c3.subtitle",
+    "purchaseMethod": "INTERNAL_CURRENCY",
+    "countable": false,
+    "additionalDemonstrationItems": [
+      {
+        "type": "Image",
+        "url": "/files/shop/69e791d5a5fa3e48440f24d0.webp",
+        "thumbUrl": "/files/shop/69e791d5a5fa3e48440f24d0.webp"
+      }
+    ],
+    "items": [
+      {
+        "type": "CUSTOMIZATION",
+        "customizationId": "697a1c654fd85417be07c5a8",
+        "customizationType": "suite",
+        "isApplyOnce": false,
+        "persistAfterWipe": true
+      }
+    ],
+    "tags": [],
+    "relatedOffers": [],
+    "showBundleComposition": false,
+    "showRelatedOffers": false
+  }
+]

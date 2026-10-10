@@ -1,0 +1,24 @@
+[
+  {
+    "id": "6ac90eec613c62c278a14426",
+    "pageId": null,
+    "parentId": null,
+    "nameKey": "menu.6ac90eec613c62c278a14426.name",
+    "order": 20,
+    "iconUrl": "/files/shop/6a4a184d14c84dbcba0eb9e8.png",
+    "selectedIconUrl": "/files/shop/6a4a1873cb2f5e2063055f98.png",
+    "soundTheme": null,
+    "labels": ["NEW"]
+  },
+  {
+    "id": "6ac90eec613c62c278a14427",
+    "pageId": "6ac90f1b6c91b4f1e102fec1",
+    "parentId": "6ac90eec613c62c278a14426",
+    "nameKey": "menu.6ac90eec613c62c278a14427.name",
+    "order": 1,
+    "iconUrl": "/files/shop/6abcf791905461805f0d2e02.png",
+    "selectedIconUrl": "/files/shop/6abcf7d5f5857b4ccc0430ff.png",
+    "soundTheme": null,
+    "labels": []
+  }
+]
