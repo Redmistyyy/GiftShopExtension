@@ -4,6 +4,7 @@ using SPTarkov.Server.Core.Models.Spt.Mod;
 using SPTarkov.Server.Core.Models.Spt.Tables;
 using SPTarkov.Server.Core.Models.Eft.Game;
 using SPTarkov.Common.Models.Logging;
+using SPTarkov.Server.Core.Routers;
 using SPTarkov.Server.Core.Utils;
 using System.Reflection;
 
@@ -32,11 +33,17 @@ public record ModMetaData : IModMetadata
 public class GiftShopExtensionMain(
     ShopTable shopTable,
     ISptLogger<GiftShopExtensionMain> logger,
-    JsonUtil jsonUtil
+    JsonUtil jsonUtil,
+    ImageRouter imageRouter
 ) : IOnLoad
 {
+    private const string ImagesFolderName = "Images";
+
+    private const string ImageRoutePrefix = "/files/giftshopextension/";
+
     public async Task OnLoadAsync(CancellationToken cancellationToken)
     {
+        CustomImageRouter();
         await LoadAllContentsAsync(cancellationToken);
     }
 
@@ -84,5 +91,24 @@ public class GiftShopExtensionMain(
         }
 
         logger.Success($"[GiftShopExtension] Merged {offers.Count} offers", null);
+    }
+
+    private void CustomImageRouter()
+    {
+        var dir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, ImagesFolderName);
+
+        if (!Directory.Exists(dir))
+        {
+            logger.Warning($"[GiftShopExtension] No '{ImagesFolderName}' folder at {dir}, custom image routes skipped.", null);
+            return;
+        }
+
+        foreach (var file in Directory.EnumerateFiles(dir, "*", SearchOption.AllDirectories))
+        {
+            var relative = Path.GetRelativePath(dir, file).Replace('\\', '/');
+            var key = ImageRoutePrefix + Path.ChangeExtension(relative, null);
+
+            imageRouter.AddRoute(key, file);
+        }
     }
 }

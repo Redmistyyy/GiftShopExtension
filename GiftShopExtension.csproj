@@ -7,13 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SPTushonka.Common" Version="5.0.0-pre.202610091220" />
-    <PackageReference Include="SPTushonka.DI" Version="5.0.0-pre.202610091220" />
-    <PackageReference Include="SPTushonka.Server.Core" Version="5.0.0-pre.202610091220" />
+    <PackageReference Include="SPTushonka.Common" Version="5.0.0-pre.202610101655" />
+    <PackageReference Include="SPTushonka.DI" Version="5.0.0-pre.202610101655" />
+    <PackageReference Include="SPTushonka.Server.Core" Version="5.0.0-pre.202610101655" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="GiftContent\**\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- 自定义图片：随 DLL 一起复制，运行时由 CustomImageRouter 注册成 /files/giftshopextension/... -->
+    <None Update="Images\**\*.png;Images\**\*.webp;Images\**\*.jpg;Images\**\*.jpeg;Images\**\*.gif;Images\**\*.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
