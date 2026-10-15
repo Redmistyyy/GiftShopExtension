@@ -46,16 +46,11 @@ internal sealed class GiftShopMiddleware(
         string offerId
     )
     {
-        if (!giftByOffer.TryGetValue(offerId, out var giftId))
-        {
-            return false;
-        }
+        if (!giftByOffer.TryGetValue(offerId, out var giftId)) return false;
+
 
         var gift = giftService.GetGiftById(giftId);
-        if (gift is null)
-        {
-            return true;
-        }
+        if (gift is null) return true;
 
         return profileHelper.PlayerHasReceivedMaxNumberOfGift(sessionId, giftId, gift.MaxToSendPlayer ?? 1);
     }
@@ -70,9 +65,8 @@ internal sealed class GiftShopMiddleware(
         var receipt = await originalPurchase;
 
         if (receipt.Outcome != ShopPurchaseOutcome.Success || !giftByOffer.TryGetValue(offerId, out var giftId))
-        {
             return receipt;
-        }
+
 
         var sendGiftResult = await giftService.SendGiftToPlayerAsync(sessionId, giftId);
         if (sendGiftResult != GiftSentResult.SUCCESS)
@@ -100,10 +94,8 @@ public sealed class AllowFreePurchasePatch : AbstractPatch
     [PatchPrefix]
     private static bool Prefix(int cost, ref bool __result)
     {
-        if (cost != 0)
-        {
-            return true;
-        }
+        if (cost != 0) return true;
+
         __result = true;
         return false;
     }
@@ -125,9 +117,8 @@ public sealed class GiftPurchasePatch : AbstractPatch
     {
         var middleware = GiftShopMiddleware.Current;
         if (middleware is null || !middleware.IsGiftOffer(offerId) || !middleware.HasAlreadyReceivedGift(sessionId, offerId))
-        {
             return true;
-        }
+
 
         __result = Task.FromResult(new ShopPurchaseReceipt(ShopPurchaseOutcome.PurchaseLimitExceeded));
 
@@ -142,10 +133,7 @@ public sealed class GiftPurchasePatch : AbstractPatch
     )
     {
         var middleware = GiftShopMiddleware.Current;
-        if (middleware is null || !middleware.IsGiftOffer(offerId))
-        {
-            return;
-        }
+        if (middleware is null || !middleware.IsGiftOffer(offerId)) return;
 
         __result = middleware.DeliverGiftAfterPurchaseAsync(__result, sessionId, offerId);
     }
