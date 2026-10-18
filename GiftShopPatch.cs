@@ -109,11 +109,7 @@ public sealed class GiftPurchasePatch : AbstractPatch
     protected override MethodBase? GetTargetMethod() => AccessTools.Method(typeof(TarcoinStoreService), nameof(TarcoinStoreService.TryPurchaseAsync));
 
     [PatchPrefix]
-    private static bool Prefix(
-        string offerId,
-        MongoId sessionId,
-        ref Task<ShopPurchaseReceipt> __result
-    )
+    private static bool Prefix(string offerId, MongoId sessionId, ref Task<ShopPurchaseReceipt> __result)
     {
         var middleware = GiftShopMiddleware.Current;
         if (middleware is null || !middleware.IsGiftOffer(offerId) || !middleware.HasAlreadyReceivedGift(sessionId, offerId))
@@ -126,16 +122,47 @@ public sealed class GiftPurchasePatch : AbstractPatch
     }
 
     [PatchPostfix]
-    private static void Postfix(
-        MongoId sessionId,
-        string offerId,
-        ref Task<ShopPurchaseReceipt> __result
-    )
+    private static void Postfix(MongoId sessionId, string offerId, ref Task<ShopPurchaseReceipt> __result)
     {
         var middleware = GiftShopMiddleware.Current;
         if (middleware is null || !middleware.IsGiftOffer(offerId)) return;
 
         __result = middleware.DeliverGiftAfterPurchaseAsync(__result, sessionId, offerId);
     }
+
+}
+
+public sealed class GiftOfferDeliverablePatch : AbstractPatch
+{
+    protected override MethodBase? GetTargetMethod() => AccessTools.Method(typeof(TarcoinStoreService), nameof(TarcoinStoreService.IsDeliverable));
+
+    [PatchPostfix]
+    private static void Postfix(ShopOffer offer, ref bool __result)
+    {
+        if (__result) return;
+        if (offer.PurchaseMethod != "INTERNAL_CURRENCY") return;
+        var middleware = GiftShopMiddleware.Current;
+
+        if (middleware?.IsGiftOffer(offer.Id.ToString()) == true) __result = true;
+    }
+
+}
+
+//Removed warning.
+public sealed class GiftOfferCollectDeliverablePatch : AbstractPatch
+{
+    protected override MethodBase? GetTargetMethod() => AccessTools.Method(typeof(TarcoinStoreService), nameof(TarcoinStoreService.CollectDeliverables));
+
+    [PatchPostfix]
+    private static void Postfix(ShopOffer offer, ref List<ShopOfferItem> __result)
+    {
+        var middleware = GiftShopMiddleware.Current;
+
+        // Only deal with the offers through BuildGiftOfferMap.
+        if (middleware?.IsGiftOffer(offer.Id.ToString()) != true) return;
+
+        __result.RemoveAll(item => item.Type == GiftShopOfferItemType.GiftMethod);
+    }
+
 
 }

@@ -17,8 +17,10 @@
     <None Update="GiftContent\**\*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-
     <None Update="Images\**\*.png;Images\**\*.webp;Images\**\*.jpg;Images\**\*.jpeg;Images\**\*.gif;Images\**\*.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Gifts\customGifts.jsonc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

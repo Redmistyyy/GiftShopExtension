@@ -78,8 +78,8 @@ public sealed class GiftShopExtensionMain(
         patchManager.AutoPatch = true;
         patchManager.EnablePatches();
 
-        logger.Success($"[GiftShopExtension] Linked {giftByOffer.Count} " +"shop offer(s) to native gifts", null);
-        
+        logger.Success($"[GiftShopExtension] Linked {giftByOffer.Count} " + "shop offer(s) to native gifts", null);
+
     }
 
     private async Task<T> LoadGiftShopContentAsync<T>(string fileName, CancellationToken ct)
@@ -196,6 +196,8 @@ public sealed class GiftShopExtensionMain(
                 throw new InvalidOperationException($"Gift offer {offerId} points to unknown gift '{giftName}'");
             if (!result.TryAdd(offerId, giftName))
                 throw new InvalidOperationException($"Duplicated gift offer id {offerId}");
+            if (offer.PurchaseMethod != "INTERNAL_CURRENCY")
+                throw new InvalidOperationException($"Gift offer {offerId} must use purchaseMethod=INTERNAL_CURRENCY");
 
         }
 
