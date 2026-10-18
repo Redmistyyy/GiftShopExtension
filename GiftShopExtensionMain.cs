@@ -12,6 +12,7 @@ using SPTarkov.Server.Core.Services.Commerce;
 using SPTarkov.Server.Core.Utils;
 using System.Reflection;
 using System.Text.Json;
+using HarmonyLib;
 using SPTarkov.Reflection.Patching;
 
 
@@ -51,14 +52,12 @@ public sealed class GiftShopExtensionMain(
     JsonUtil jsonUtil,
     ImageRouter imageRouter,
     ProfileHelper profileHelper,
-    SaveServer saveServer,
-    PatchManager patchManager
+    SaveServer saveServer
 ) : IOnLoad
 {
     private const string ImagesFolderName = "Images";
 
     private const string ImageRoutePrefix = "/files/giftshopextension/";
-    private const string PatcherName = "com.redmisty.giftshopextension";
 
     public async Task OnLoadAsync(CancellationToken cancellationToken)
     {
@@ -74,9 +73,10 @@ public sealed class GiftShopExtensionMain(
             logger
         );
 
-        patchManager.PatcherName = PatcherName;
-        patchManager.AutoPatch = true;
-        patchManager.EnablePatches();
+        new AllowFreePurchasePatch().Enable();
+        new GiftPurchasePatch().Enable();
+        new GiftOfferDeliverablePatch().Enable();
+        new GiftOfferCollectDeliverablePatch().Enable();
 
         logger.Success($"[GiftShopExtension] Linked {giftByOffer.Count} " + "shop offer(s) to native gifts", null);
 
